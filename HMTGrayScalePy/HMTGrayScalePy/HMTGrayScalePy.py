@@ -24,9 +24,15 @@ def rolling_window(a, window):
     return a
 
 #complement of array - so far only works with uint8 arrays
-#TODO: switch over max value in array
 def complement(X):
-    return numpy.invert(X, dtype=uint8)
+    max = X.ravel().max()
+    tipo = uint8
+
+    #TODO: complete for other cases (ex. float)
+    if max == 1:
+        tipo = bool
+            
+    return numpy.invert(X, dtype=tipo)
 
 #intersection between 2 arrays of any type
 def intersection(X,Y):
@@ -69,7 +75,6 @@ def erode(X, B):
             
             resultImage[x,y] = rankOrder(windows[x-1,y-1],B,0)
     return resultImage
-
 
 #binary hit-or-miss based on erode operation
 def binhmt(X, Bfg, Bbg):
