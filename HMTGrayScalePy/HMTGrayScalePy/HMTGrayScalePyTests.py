@@ -5,10 +5,10 @@ from numpy import *
 
 class Test_HMTGrayScalePyTests(unittest.TestCase):
 
-    #x  = [[0 1 0]
+    #x = [[0 1 0]
     #      [1 1 1]
     #      [0 1 0]]
-    #r  = [[1 0 1]
+    #r = [[1 0 1]
     #      [0 0 0]
     #      [1 0 1]]
     def test_complement_binary(self):
@@ -16,10 +16,10 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
         r = complement(x)
         numpy.testing.assert_array_equal(r, array([[1,0,1],[0,0,0],[1,0,1]]))
 
-    #x  = [[0 1 0]
+    #x = [[0 1 0]
     #      [1 2 1]
     #      [0 1 0]]
-    #r  = [[255 254 255]
+    #r = [[255 254 255]
     #      [254 253 254]
     #      [255 254 255]]
     def test_complement_uint8(self):
@@ -42,13 +42,48 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
     #    [ 0.  0.  0.  0.  0.]
     #    [ 0.  0.  0.  0.  0.]
     #    [ 0.  0.  0.  1.  0.]
-    #    [ 0.  0.  0.  0.  0.]]    
+    #    [ 0.  0.  0.  0.  0.]]
     def test_binhtm_Case1(self):
         x = array([[0,0,1,1,0],[1,1,1,1,1],[0,1,0,1,0],[0,1,1,1,1],[0,1,0,1,0]])
         bfg = array([[0,1,0],[1,1,1],[0,1,0]])
         bbg = array([[1,0,1],[0,0,0],[1,0,1]])
         r = binhmt(x,bfg,bbg)
         numpy.testing.assert_array_equal(r, array([[0.,0.,0.,0.,0.],[0.,0.,0.,0.,0.],[0.,0.,0.,0.,0.],[0.,0.,0.,1.,0.],[0.,0.,0.,0.,0.]]))
+
+    #x= [[0 0 1 1 0]
+    #    [1 1 1 1 1]
+    #    [0 1 0 1 0]
+    #    [0 1 1 1 1]
+    #    [0 1 0 1 0]]
+    #bfg= [[0 1 0]
+    #      [1 1 1]
+    #      [0 1 0]]
+    #bfg= [[1]]
+    #expected error: SEs with different shapes
+    def test_binhtm_Case2_SEsWithDifferentShapes_raisesException(self):
+        x = array([[0,0,1,1,0],[1,1,1,1,1],[0,1,0,1,0],[0,1,1,1,1],[0,1,0,1,0]])
+        bfg = array([[0,1,0],[1,1,1],[0,1,0]])
+        bbg = array([[1]])
+        self.assertRaisesRegexp(Exception, "SEs with different shapes", binhmt, x, bfg, bbg)
+
+        
+    #x= [[0 0 1 1 0]
+    #    [1 1 1 1 1]
+    #    [0 1 0 1 0]
+    #    [0 1 1 1 1]
+    #    [0 1 0 1 0]]
+    #bfg= [[0 1 0]
+    #      [1 1 1]
+    #      [0 1 0]]
+    #bfg= [[1 0 1]
+    #      [0 1 0]
+    #      [1 0 1]]
+    #expected error: SEs with intersection not empty
+    def test_binhtm_Case3_SEsWithIntersectionNotEmpty_raisesException(self):
+        x = array([[0,0,1,1,0],[1,1,1,1,1],[0,1,0,1,0],[0,1,1,1,1],[0,1,0,1,0]])
+        bfg = array([[0,1,0],[1,1,1],[0,1,0]])
+        bbg = array([[1,0,1],[0,1,0],[1,0,1]])
+        self.assertRaisesRegexp(Exception, "SEs with intersection not empty", binhmt, x, bfg, bbg)
 
 
     #x= [[0.0 0.0 1.0 2.0 0.0]
@@ -113,9 +148,9 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
     #k= 1
     #r= 1
     def test_rankOrder_Case1(self):
-        x= array([0, 2, 3, 1, 2])
-        b= array([1, 1, 1, 1, 1])
-        k= 1
+        x = array([0, 2, 3, 1, 2])
+        b = array([1, 1, 1, 1, 1])
+        k = 1
         r = rankOrder(x,b,k)
         numpy.testing.assert_equal(r, 1)
 
@@ -124,9 +159,9 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
     #k= 2
     #r= 3
     def test_rankOrder_Case2(self):
-        x= array([0, 2, 3, 1, 2])
-        b= array([1, 0, 1, 1, 0])
-        k= 2
+        x = array([0, 2, 3, 1, 2])
+        b = array([1, 0, 1, 1, 0])
+        k = 2
         r = rankOrder(x,b,k)
         numpy.testing.assert_equal(r, 3)
 

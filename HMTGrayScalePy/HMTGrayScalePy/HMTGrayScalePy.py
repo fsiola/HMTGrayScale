@@ -78,6 +78,13 @@ def erode(X, B):
 
 #binary hit-or-miss based on erode operation
 def binhmt(X, Bfg, Bbg):
+
+    if Bfg.shape != Bbg.shape:
+        raise Exception('SEs with different shapes')
+
+    if sum(intersection(Bfg, Bbg).ravel()) != 0:
+        raise Exception('SEs with intersection not empty')
+
     return intersection(erode(X, Bfg), erode(complement(X), Bbg))
 
 #rank order operation: takes input array X and mask array B and return the k-th element (starting from 0 index)
