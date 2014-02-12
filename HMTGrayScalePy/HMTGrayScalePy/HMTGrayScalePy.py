@@ -52,20 +52,31 @@ def binaryErodeUsingCounting(X, B):
     return resultImage
 
 #erosion between X and binary B using rank-order 
-def binaryErode(X, B):
+def erode(X, B):
+
+    #testing for 1x1 structuring element binary case
+    if B.shape[0] == 1 and B.shape[1] == 1:
+        return X
+
     resultImage = zeros(X.shape)
     windows = rolling_window(X,B.shape)
-    for x in range(1,X.shape[0]-1): #only works with 3x3 SEs
-        for y in range(1,X.shape[1]-1):
+    for x in range(int(X.shape[0]-floor(X.shape[0])), int(floor(X.shape[0]-1))): 
+        if x == int(X.shape[0]-floor(X.shape[0])): #border condition
+            continue
+        for y in range(int(X.shape[0]-floor(X.shape[1])), int(floor(X.shape[1]-1))):
+            if y == int(X.shape[0]-floor(X.shape[1])):
+                continue
+            
             resultImage[x,y] = rankOrder(windows[x-1,y-1],B,0)
     return resultImage
 
 
 #binary hit-or-miss based on erode operation
 def binhmt(X, Bfg, Bbg):
-    return intersection(binaryErode(X, Bfg), binaryErode(complement(X), Bbg))
+    return intersection(erode(X, Bfg), erode(complement(X), Bbg))
 
 #rank order operation: takes input array X and mask array B and return the k-th element (starting from 0 index)
 def rankOrder(X, B, k):
-    temp = X.ravel()[B.ravel()>0].ravel().argsort()
-    return X.ravel()[B.ravel()>0][temp][k]
+    temp = X.ravel()[B.ravel()>0].ravel()
+    temp.sort()
+    return temp[k]
