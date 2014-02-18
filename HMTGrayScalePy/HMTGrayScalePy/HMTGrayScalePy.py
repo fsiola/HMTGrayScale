@@ -1,6 +1,9 @@
 import numpy
 from numpy import *
 
+#General TODOs
+#make the origin of the SE its center point (or approx.)
+
 #internet
 def rolling_window_lastaxis(a, window):
     """Directly taken from Erik Rigtorp's post to numpy-discussion.
@@ -28,7 +31,7 @@ def complement(X):
     max = X.ravel().max()
     tipo = uint8
 
-    #TODO: complete for other cases (ex. float)
+    #TODO: complete for other cases (ex.  float)
     if max == 1:
         tipo = bool
             
@@ -38,27 +41,33 @@ def complement(X):
 def intersection(X,Y):
     return minimum(X,Y).astype(X.dtype)
 
-#binary erosion between X and B 
-#TODO: smart implementation. the one used here is the easiest one to do
+#binary erosion between X and B
+#TODO: smart implementation.  the one used here is the easiest one to do
 #TODO: X.shape fails for 1D arrays
 def binaryErodeUsingCounting(X, B):
     hX,wX = X.shape 
     hB,wB = B.shape 
     numberOfOnesInB = count_nonzero(B)
     resultImage = zeros(X.shape)
-    for x in range(1,hX-1): #not workin with borders
-        for y in range(1,wX-1): #not workin with borders
+    for x in range(1,hX - 1): #not workin with borders
+        for y in range(1,wX - 1): #not workin with borders
             numberOfMatches = 0
-            for i in range(-(hB-1)/2,(hB+1)/2):
-                for j in range(-(wB-1)/2,(wB+1)/2):
-                    if B[abs(-(hB-1)/2 - i),abs(-(wB-1)/2 - j)] == 1 and X[x+i,y+j] == 1:
+            for i in range(-(hB - 1) / 2,(hB + 1) / 2):
+                for j in range(-(wB - 1) / 2,(wB + 1) / 2):
+                    if B[abs(-(hB - 1) / 2 - i),abs(-(wB - 1) / 2 - j)] == 1 and X[x + i,y + j] == 1:
                        numberOfMatches+=1
             if numberOfMatches == numberOfOnesInB:
-                resultImage[x,y]=1
+                resultImage[x,y] = 1
     return resultImage
 
-#erosion between X and binary B using rank-order 
+#erosion between X and binary B using rank-order
 def erode(X, B):
+
+    if len(X.shape) == 1:
+        X = expand_dims(X,0)
+
+    if len(B.shape) == 1:
+        B = expand_dims(B,0)
 
     #testing for 1x1 structuring element binary case
     if B.shape[0] == 1 and B.shape[1] == 1:
@@ -66,14 +75,10 @@ def erode(X, B):
 
     resultImage = zeros(X.shape)
     windows = rolling_window(X,B.shape)
-    for x in range(int(X.shape[0]-floor(X.shape[0])), int(floor(X.shape[0]-1))): 
-        if x == int(X.shape[0]-floor(X.shape[0])): #border condition
-            continue
-        for y in range(int(X.shape[0]-floor(X.shape[1])), int(floor(X.shape[1]-1))):
-            if y == int(X.shape[0]-floor(X.shape[1])):
-                continue
+    for x in range(int(floor(B.shape[0] / 2)), int(floor(X.shape[0] - B.shape[0] / 2))):
+        for y in range(int(floor(B.shape[1] / 2)), int(floor(X.shape[1] - B.shape[1] / 2))):
             
-            resultImage[x,y] = rankOrder(windows[x-1,y-1],B,0)
+            resultImage[x,y] = rankOrder(windows[x - 1,y - 1],B,0)
     return resultImage
 
 #binary hit-or-miss based on erode operation
@@ -87,8 +92,38 @@ def binhmt(X, Bfg, Bbg):
 
     return intersection(erode(X, Bfg), erode(complement(X), Bbg))
 
-#rank order operation: takes input array X and mask array B and return the k-th element (starting from 0 index)
+#rank order operation: takes input array X and mask array B and return the k-th
+#element (starting from 0 index)
 def rankOrder(X, B, k):
-    temp = X.ravel()[B.ravel()>0].ravel()
+    temp = X.ravel()[B.ravel() > 0].ravel()
     temp.sort()
+
+    if(k >= len(temp)):
+       k = len(temp)-1
+
     return temp[k]
+
+#Khosravi and Schafer Hit-Or-Miss Transform
+#M.  Khosravi e R.  W.  Schafer.  Template matching based on a grayscale
+#hit-or-miss transform.  IEEE Transactions on Image Processing, 5(6):1060
+#{1066.  ISSN 1057-7149.  doi: 10.1109/83.503921.  Citado na pag.  1, 21, 22,
+#26
+def ksHMT(f,B):    
+    #TODO: check types
+
+    if len(f.shape) == 1:
+        f = expand_dims(f,0)
+
+    if len(B.shape) == 1:
+        B = expand_dims(B,0)
+
+    resultImage = zeros(f.shape)
+    windows = rolling_window(f,B.shape)
+    
+    for x in range(int(floor(B.shape[0] / 2)), int(floor(f.shape[0] - B.shape[0] / 2))):
+        for y in range(int(floor(B.shape[1] / 2)), int(floor(f.shape[1] - B.shape[1] / 2))):
+
+            resultImage[x,y] = rankOrder(windows[x - 1,y - 1],B,0) - rankOrder(windows[x - 1,y - 1],B,B.ravel().shape[0])
+    return resultImage
+    
+    return

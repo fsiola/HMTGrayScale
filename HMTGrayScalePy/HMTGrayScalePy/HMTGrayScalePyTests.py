@@ -104,7 +104,26 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
         b = array([[0,1,0],[1,1,1],[0,1,0]])
         r = erode(x,b)
         numpy.testing.assert_array_equal(r, array([[0.,0.,0.,0.,0.],[0.,0.,0.,2.,0.],[0.,0.,0.,0.,0.],[0.,0.,0.,1.,0.],[0.,0.,0.,0.,0.]]))
+    
+    #x= [[0.0 1.0 1.0 1.0 0.0]]
+    #b= [[1 1 1]]
+    #r= [[ 0.  0.  1.  0.  0.]]
+    def test_erode_SimpleArray(self):
+        x = array([[0,1,1,1,0]])
+        b = array([[1,1,1]])
+        r = erode(x,b)
+        numpy.testing.assert_array_equal(r, array([[0.,0.,1.,0.,0.]]))
         
+
+    #x= [0.0 1.0 1.0 1.0 0.0]
+    #b= [1 1 1]
+    #r= [[ 0.  0.  1.  0.  0.]]
+    def test_erode_1DArraysConverted(self):
+        x = array([0,1,1,1,0])
+        b = array([1,1,1])
+        r = erode(x,b)
+        numpy.testing.assert_array_equal(r, array([[0.,0.,1.,0.,0.]]))
+            
 
     #x= [[0 0 1 1 0]
     #    [1 1 1 1 1]
@@ -143,6 +162,7 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
         r = erode(x,b)
         numpy.testing.assert_array_equal(r, array([[0,0,1,1,0],[1,1,1,1,1],[0,1,0,1,0],[0,1,1,1,1],[0,1,0,1,0]]))
 
+
     #x= [0 2 3 1 2]
     #b= [1 1 1 1 1]
     #k= 1
@@ -164,6 +184,19 @@ class Test_HMTGrayScalePyTests(unittest.TestCase):
         k = 2
         r = rankOrder(x,b,k)
         numpy.testing.assert_equal(r, 3)
+
+
+    #f= [0 1 1 1 0 1 0 1 1 1 0]
+    #b= [0 1 0]
+    #e= [-1 -3 -3 -2 -3 0 -3 -2 -3 -3 -1]
+    def test_ksHMT_Case1(self):
+        x = array([0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0])
+        b = array([0, 1, 0])
+        e = array([-3, -3, -2, -3, 0, -3, -2, -3, -3])
+        r = ksHMT(x,b)        
+        numpy.testing.assert_equal(r, e)
+
+
 
 if __name__ == '__main__':
     unittest.main()
