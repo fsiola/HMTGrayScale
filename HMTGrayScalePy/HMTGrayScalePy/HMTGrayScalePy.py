@@ -106,24 +106,34 @@ def rankOrder(X, B, k):
 #Khosravi and Schafer Hit-Or-Miss Transform
 #M.  Khosravi e R.  W.  Schafer.  Template matching based on a grayscale
 #hit-or-miss transform.  IEEE Transactions on Image Processing, 5(6):1060
-#{1066.  ISSN 1057-7149.  doi: 10.1109/83.503921.  Citado na pag.  1, 21, 22,
-#26
-def ksHMT(f,B):    
-    #TODO: check types
-
+#{1066.  ISSN 1057-7149.  doi: 10.1109/83.503921.  Citado na pag.  1, 21, 22, 26
+def ksHMTMinMax(f,B):    
     if len(f.shape) == 1:
         f = expand_dims(f,0)
 
     if len(B.shape) == 1:
         B = expand_dims(B,0)
 
+    #testing for 1x1 structuring element binary case
+    if B.shape[0] == 1 and B.shape[1] == 1:
+        return f
+
     resultImage = zeros(f.shape)
     windows = rolling_window(f,B.shape)
-    
     for x in range(int(floor(B.shape[0] / 2)), int(floor(f.shape[0] - B.shape[0] / 2))):
         for y in range(int(floor(B.shape[1] / 2)), int(floor(f.shape[1] - B.shape[1] / 2))):
+            
+            minimo = 999999
+            maximo = -999999
+            for z in range(len(B.ravel())):
+                temp = windows[x - 1,y - 1][z+x] - B[0][z]
+                if(minimo > temp):
+                    minimo = temp
 
-            resultImage[x,y] = rankOrder(windows[x - 1,y - 1],B,0) - rankOrder(windows[x - 1,y - 1],B,B.ravel().shape[0])
+                if(maximo < temp):
+                    maximo = temp
+
+            #minimo = rankOrder(windows[x - 1,y - 1],B,0) 
+            #maximo = rankOrder(windows[x - 1,y - 1],B,len(B.ravel()))
+            resultImage[x,y] = minimo - maximo
     return resultImage
-    
-    return
