@@ -3,21 +3,33 @@ from numpy import *
 from scipy.ndimage import *
 from ia636 import *
 from ia870 import *
+from PIL import Image
 
-from scipy import misc
 import matplotlib.pyplot as plt
 
 def open(path):
-    img = misc.imread(path,1)
+    img = Image.open(path).convert('L')
+    img = asarray(img)
     img.dtype = 'uint8'
     return img
 
-def show(img):
-    plt.imshow(img)
-    plt.show()
+def save(img,title='image'):
+    Image.fromarray(img).save('ResultImage\\' + title + '.png')
+
+def show(img,title='image'):
+    Image.fromarray(img).show(title)
+    
+def erode():
+    global loadedImage, seFG
+    return iaero(loadedImage, seFG)
+
+def dilate():
+    global loadedImage, seFG
+    return iadil(loadedImage, seFG)
 
 #Khosravi and Schafer Hit-Or-Miss Transformation
 def ksHMT(f, bfg):
+
     if len(f.shape) == 1:
         f = expand_dims(f,0)
 
@@ -28,6 +40,7 @@ def ksHMT(f, bfg):
     eroMFMBfg = iaero(ianeg(f), ianeg(bfg))
 
     resultImage = zeros(f.shape)
+
 
     for x in range(f.shape[0]):
         for y in range(f.shape[1]):
@@ -54,7 +67,7 @@ def suHMT(f,bfg, bbg):
     bbg = ianeg(bbg)
 
     eroFBfg = iaero(f, bfg)
-    dilBbg = iadil(f, bbg)
+    dilFBbg = iadil(f, bbg)
 
     resultImage = zeros(f.shape)
 
@@ -78,7 +91,7 @@ def bHMT(f, bfg, bbg):
     bbg = ianeg(bbg)
 
     eroFBfg = iaero(f, bfg)
-    dilBbg = iadil(f, bbg)
+    dilFBbg = iadil(f, bbg)
 
     resultImage = zeros(f.shape)
 
@@ -102,15 +115,15 @@ def rHMT(f, bfg, bbg):
     bbg = ianeg(bbg)
 
     eroFBfg = iaero(f, bfg)
-    dilBbg = iadil(f, bbg)
+    dilFBbg = iadil(f, bbg)
 
-    maxValue = max(eroFBfg, max(dilBbg)) + 1
+    maxValue = max(max(eroFBfg.ravel()), max(dilFBbg.ravel())) + 1
 
     resultImage = zeros(f.shape)
 
     for x in range(f.shape[0]):
         for y in range(f.shape[1]):
-            if(ero[x][y] >= dilBbg[x][y] != maxvalue):
+            if(eroFBfg[x][y] >= dilFBbg[x][y] != maxValue):
                 resultImage[x][y] = eroFBfg[x][y]
             else:
                 resultImage[x][y] = maxValue
@@ -124,9 +137,6 @@ def rgHMT(f, bfg, bbg):
     if len(f.shape) == 1:
         f = expand_dims(f,0)
 
-    if len(b.shape) == 1:
-        b = expand_dims(b,0)
-
     maxF = max(f.ravel())
 
     resultImage = zeros(f.shape)
@@ -136,20 +146,9 @@ def rgHMT(f, bfg, bbg):
         tempBfg = zeros(bfg.shape)
         tempBbg = zeros(bbg.shape)
 
-        for x in range(f.shape[0]):
-            for y in range(f.shape[1]):
-                if(f[x][y] == t):
-                    tempImage[x][y] = 1
-
-        for x in range(bfg.shape[0]):
-            for y in range(bfg.shape[1]):
-                if(bfg[x][y] == t):
-                    tempBfg[x][y] = 1
-
-        for x in range(bbg.shape[0]):
-            for y in range(bbg.shape[1]):
-                if(bbg[x][y] == t):
-                    tempBbg[x][y] = 1
+        tempF[where(f == t)] = True
+        tempBfg[where(bfg == t)] = True
+        tempBbg[where(bbg == t)] = True
 
         tempBinHMT = binary_hit_or_miss(tempF, tempBfg, tempBbg)
 
@@ -161,6 +160,7 @@ def rgHMT(f, bfg, bbg):
 
 #variables
 openWindowAfterOperation = True
+saveImageAfterOperation = True
 fileNameImage = ''
 fileNameFG = ''
 fileNameBG = ''
@@ -179,6 +179,9 @@ rgHMTResult = None
 def help():
     print "HMT grey-erosion - type desired action"
     print "\to-toogle open/close result images (actual: " , openWindowAfterOperation , ")"
+    print "\s-toogle save result images (actual: " , saveImageAfterOperation , ")"
+    print "\te-erode image"
+    print "\td-dilate image"
     print "\tds-define se"
     print "\tls-load se"
     print "\tli-load image"
@@ -188,6 +191,7 @@ def help():
     print "\tro-rHMT - Ronse Hit-Or-Miss Transformation"
     print "\trg-rgHMT - Raducana and Grana Hit-Or-Miss Transformation"
     print "\ta-run all HMT implementations"
+    print "\tdemo-run demo for all sample imafes in all HMT implementations"
     print "\th-repeat this message"
     print "\tx-exit"
 
@@ -202,8 +206,10 @@ def openSEs():
         print 'error: ', sys.exc_info()[0]
 
 def openImage():
+    global loadedImage
     try:
         fileNameImage = raw_input('image file location: ')            
+        if(fileNameImage == ''): fileNameImage = 'C:\Users\Felipe\Documents\GitHub\HMTGrayScale\HMTGrayScalePy\HMTGrayScalePy\TestImages\\binarySquare.png'
         loadedImage = open(fileNameImage)
         if(openWindowAfterOperation):
             show(loadedImage)
@@ -211,45 +217,106 @@ def openImage():
         print 'error: ', sys.exc_info()[0]
 
 def executeHMT(op):
+    global loadedImage, seFG, seBG, ksHMTResult, suHMTResult, bHMTResult, rHMTResult, rgHMTResult
     try:
         if(op == 'ks' or op == 'a'):
-            ksHMTResult= ksHMT(loadedImage, seFG)
+            print 'executing ksHMT'
+            ksHMTResult = ksHMT(loadedImage, seFG)
 
         if(op == 'su' or op == 'a'):
-            suHMTResult= suHMT(loadedImage, seFG, seBG)
+            print 'executing suHMT'
+            suHMTResult = suHMT(loadedImage, seFG, seBG)
 
         if(op == 'ba' or op == 'a'):
-            bHMTResult= bHMT(loadedImage, seFG, seBG)
+            print 'executing baHMT'
+            bHMTResult = bHMT(loadedImage, seFG, seBG)
 
         if(op == 'ro' or op == 'a'):
-            rHMTResult= rHMT(loadedImage, seFG, seBG)
+            print 'executing roHMT'
+            rHMTResult = rHMT(loadedImage, seFG, seBG)
 
         if(op == 'rg' or op == 'a'):
-            rgHMTResult= rgHMT(loadedImage, seFG, seBG)
+            print 'executing rgHMT'
+            rgHMTResult = rgHMT(loadedImage, seFG, seBG)
     except:
         print 'error: ', sys.exc_info()[0]
 
 def openHMTResult(op):
+    global ksHMTResult, suHMTResult, bHMTResult, rHMTResult, rgHMTResult
     try:
         if(op == 'ks' or op == 'a'):
-            show(ksHMTResult)
+            show(ksHMTResult, 'ksHTM')
 
         if(op == 'su' or op == 'a'):
-            show(suHMTResult)
+            show(suHMTResult, 'suHTM')
 
         if(op == 'ba' or op == 'a'):
-            show(bHMTResult)
+            show(bHMTResult, 'baHTM')
 
         if(op == 'ro' or op == 'a'):
-            show(rHMTResult)
+            show(rHMTResult, 'roHTM')
 
         if(op == 'rg' or op == 'a'):
-            show(rgHMTResult)
+            show(rgHMTResult, 'rgHTM')
     except:
         print 'error: ', sys.exc_info()[0]
 
+def saveHMTResult(op):
+    global ksHMTResult, suHMTResult, bHMTResult, rHMTResult, rgHMTResult
+    try:
+        if(op == 'ks' or op == 'a'):
+            save(ksHMTResult, 'ksHTM')
+
+        if(op == 'su' or op == 'a'):
+            save(suHMTResult, 'suHTM')
+
+        if(op == 'ba' or op == 'a'):
+            save(bHMTResult, 'baHTM')
+
+        if(op == 'ro' or op == 'a'):
+            save(rHMTResult, 'roHTM')
+
+        if(op == 'rg' or op == 'a'):
+            save(rgHMTResult, 'rgHTM')
+    except:
+        print 'error: ', sys.exc_info()[0]
+
+def createSEs():
+    global seFG, seBG
+    try:
+        funcFG = raw_input('type function to create se fg: ')
+        if(funcFG == ''): funcFG = 'iasebox(10)'
+        seFG = eval(funcFG)
+        funcBG = raw_input('type function to create se bg: ')
+        if(funcBG == ''): funcBG = 'iasecross(10)'
+        seBG = eval(funcBG)
+    except:
+        print 'error: ', sys.exc_info()[0]
+        
+def demo():
+    global loadedImage, seFG, seBG
+
+    try:
+        createSEs()
+
+        files = array(['TestImages\\binarySquare.png',
+                       'TestImages\\crayonSquare.png',
+                       'TestImages\\graySquare.png',
+                       'TestImages\\naturedSquare.png',
+                       'TestImages\\oilSquare.png',
+                       'TestImages\\waterSquare.png'])
+
+        for file in files:
+            print 'executing ', file
+            loadedImage = open(file)
+            show(loadedImage, file)
+            executeHMT('a')           
+            openHMTResult('a')
+    except:
+        print 'error: ', sys.exc_info()[0]
 
 def main():
+
     option = 'h'
 
     #main loop
@@ -257,22 +324,40 @@ def main():
         if(option == 'h'):
             help()
 
+        elif(option == 'demo'):
+            demo()
+
         elif(option == 't'):
             global openWindowAfterOperation
             openWindowAfterOperation = not openWindowAfterOperation
             help()
 
-        elif(option == 'ds'): #use like creating SEs in Adesso - for FG and BG
-            print 'not implemented yet' 
+        elif(option == 's'):
+            global saveImageAfterOperation
+            saveImageAfterOperation = not saveImageAfterOperation
+            help()
+
+        elif(option == 'e'):
+            img = erode()
+            show(img, 'erode')
+
+        elif(option == 'd'):
+            img = dilate()
+            show(img, 'dilate')
+
+        elif(option == 'ds'): #use like creating SEs in AdessoWiki - for FG and BG
+            createSEs()
             
         elif(option == 'ls'): #for FG and BG
             openSEs()
                                    
         elif(option == 'li'): 
             openImage()
-            
+                
         elif(option == 'ks' or option == 'su' or option == 'ba' or option == 'ro' or option == 'rg' or option == 'a'): 
             executeHMT(option)           
+            if(saveImageAfterOperation): 
+                saveHMTResult(option)
             if(openWindowAfterOperation): 
                 openHMTResult(option)
 
@@ -280,7 +365,7 @@ def main():
             print 'not a valid command'            
             help()
 
-        option = raw_input('option: ');
+        option = raw_input('option: ')
 
 
 if __name__ == "__main__":
