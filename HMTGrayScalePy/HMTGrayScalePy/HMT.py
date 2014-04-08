@@ -1,11 +1,19 @@
 import sys
+
 from numpy import *
 from scipy.ndimage import *
 from ia636 import *
 from ia870 import *
 from PIL import Image
+import ImageQt
+from PyQt4 import *
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 
 import matplotlib.pyplot as plt
+
+from GUI import *
+
 
 def open(path):
     img = Image.open(path).convert('L')
@@ -13,8 +21,9 @@ def open(path):
     img.dtype = 'uint8'
     return img
 
-def save(img,title='image'):
-    Image.fromarray(img).save('ResultImage\\' + title + '.png')
+def saveImage(img,title='image'):    
+    img.dtype='uint8'
+    Image.fromarray(img).save('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png')
 
 def show(img,title='image'):
     Image.fromarray(img).show(title)
@@ -265,19 +274,19 @@ def saveHMTResult(op):
     global ksHMTResult, suHMTResult, bHMTResult, rHMTResult, rgHMTResult
     try:
         if(op == 'ks' or op == 'a'):
-            save(ksHMTResult, 'ksHTM')
+            saveImage(ksHMTResult, 'ksHTM')
 
         if(op == 'su' or op == 'a'):
-            save(suHMTResult, 'suHTM')
+            saveImage(suHMTResult, 'suHTM')
 
         if(op == 'ba' or op == 'a'):
-            save(bHMTResult, 'baHTM')
+            saveImage(bHMTResult, 'baHTM')
 
         if(op == 'ro' or op == 'a'):
-            save(rHMTResult, 'roHTM')
+            saveImage(rHMTResult, 'roHTM')
 
         if(op == 'rg' or op == 'a'):
-            save(rgHMTResult, 'rgHTM')
+            saveImage(rgHMTResult, 'rgHTM')
     except:
         print 'error: ', sys.exc_info()[0]
 
@@ -368,5 +377,166 @@ def main():
         option = raw_input('option: ')
 
 
+
+def loadImage():
+    global loadedImage
+    try:
+        fileNameImage = str(ui.txtFileName.text())
+        if(fileNameImage == ''): fileNameImage = 'C:\Users\Felipe\Documents\GitHub\HMTGrayScale\HMTGrayScalePy\HMTGrayScalePy\TestImages\\binarySquare.png'
+        loadedImage = open(fileNameImage)
+
+        #show image
+        pixmap = QtGui.QPixmap(fileNameImage, '1')
+        ui.lblImage.setPixmap(pixmap)
+
+        ui.tabWidget.setCurrentIndex(0)
+        
+    except:
+        print 'error: ', sys.exc_info()[0]
+
+def generateSEFG():
+    global seFG
+    try:
+        funcFG = str(ui.txtSEFG.text())
+        if(funcFG == ''): funcFG = 'iasebox(10)'
+        seFG = eval(funcFG)
+        
+        if len(seFG.shape) == 1:
+            seFG = expand_dims(seFG,0)
+
+        #show image
+        if(seFG.dtype == 'bool'):
+            temp =iaseshow(seFG, 'expand')
+            temp.dtype='uint8'
+            temp[temp==1]=255
+
+            title='seFG'
+            saveImage(temp,title)
+            pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+            ui.lblSEFGImage.setPixmap(pixmap)
+            ui.tabWidget.setCurrentIndex(1)
+            #show(temp)
+        else:
+            title='seFG'
+            saveImage(seFG,title)
+            pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+            ui.lblSEFGImage.setPixmap(pixmap)
+            ui.tabSEFG.setCurrentIndex(1)
+            #show(seFG)            
+        
+    except:
+        print 'error: ', sys.exc_info()[0]
+
+def generateSEBG():
+    global seBG
+    try:
+        funcBG = str(ui.txtSEBG.text())
+        if(funcBG == ''): funcBG = 'iasecross(10)'
+        seBG = eval(funcBG)
+        
+        if len(seBG.shape) == 1:
+            seBG = expand_dims(seBG,0)
+
+        #show image
+        if(seBG.dtype == 'bool'):
+            temp =iaseshow(seBG, 'expand')
+            temp.dtype='uint8'
+            temp[temp==1]=255
+            
+            title='seBG'
+            saveImage(temp,title)
+            pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+            ui.lblSEBGImage.setPixmap(pixmap)
+            ui.tabWidget.setCurrentIndex(2)
+        else:
+            title='seBG'
+            saveImage(temp,title)
+            pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+            ui.lblSEBGImage.setPixmap(pixmap)
+            ui.tabWidget.setCurrentIndex(2)
+            #show(seBG)            
+        
+    except:
+        print 'error: ', sys.exc_info()[0]
+
+def executeKSHMT():
+    global ksHMTResult
+    executeHMT('ks')
+    title='kshmt'
+    saveImage(ksHMTResult,title)
+    pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+    ui.lblKSHMTImage.setPixmap(pixmap)
+    ui.tabWidget.setCurrentIndex(3)
+    #show(ksHMTResult)
+
+def executeSUHMT():
+    global suHMTResult
+    executeHMT('su')
+    title='suhmt'
+    saveImage(suHMTResult,title)
+    pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+    ui.lblSUHMTImage.setPixmap(pixmap)
+    ui.tabWidget.setCurrentIndex(4)
+    #show(suHMTResult)
+
+def executeBAHMT():
+    global bHMTResult
+    executeHMT('ba')
+    title='bahmt'
+    saveImage(bHMTResult,title)
+    pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+    ui.lblKSHMTImage.setPixmap(pixmap)
+    ui.tabWidget.setCurrentIndex(5)
+    #show(bHMTResult)
+
+def executeROHMT():
+    global rHMTResult
+    executeHMT('ro')
+    title='rohmt'
+    saveImage(rHMTResult,title)
+    pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+    ui.lblKSHMTImage.setPixmap(pixmap)
+    ui.tabWidget.setCurrentIndex(6)
+    #show(rHMTResult)
+        
+def executeRGHMT():
+    global rgHMTResult
+    executeHMT('rg')
+    title='rghmt'
+    saveImage(rgHMTResult,title)
+    pixmap = QtGui.QPixmap('C:\\Users\\Felipe\\Documents\\GitHub\\HMTGrayScale\\HMTGrayScalePy\\HMTGrayScalePy\\ResultImage\\' + title + '.png', '1')
+    ui.lblKSHMTImage.setPixmap(pixmap)
+    ui.tabWidget.setCurrentIndex(7)
+    #show(rgHMTResult)
+
+def executeALLHMT():
+    global rgHMTResult
+    executeKSHMT()
+    executeSUHMT()
+    executeBAHMT()
+    executeROHMT()
+    executeRGHMT()
+
+
 if __name__ == "__main__":
-    main()
+    #main()
+
+    app=QtGui.QApplication(sys.argv)
+    Form=QtGui.QWidget()
+    ui=Ui_MainWindow()
+    ui.setupUi(Form)
+
+    app.connect(ui.btnLoadImage, SIGNAL("clicked()"), loadImage)
+    app.connect(ui.btnSEFG, SIGNAL("clicked()"), generateSEFG)
+    app.connect(ui.btnSEBG, SIGNAL("clicked()"), generateSEBG)
+
+    app.connect(ui.btnKSHMT, SIGNAL("clicked()"), executeKSHMT)
+    app.connect(ui.btnSUHMT, SIGNAL("clicked()"), executeSUHMT)
+    app.connect(ui.btnBAHMT, SIGNAL("clicked()"), executeBAHMT)
+    app.connect(ui.btnROHMT, SIGNAL("clicked()"), executeROHMT)
+    app.connect(ui.btnRGHMT, SIGNAL("clicked()"), executeRGHMT)
+    app.connect(ui.btnAll, SIGNAL("clicked()"), executeALLHMT)
+    
+    Form.show()
+    sys.exit(app.exec_())
+

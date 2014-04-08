@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="GUI.py" />
     <Compile Include="HMT.py" />
     <Compile Include="HMTGrayScalePy.py" />
     <Compile Include="HMTGrayScalePyTests.py" />
@@ -29,9 +30,11 @@
     <Compile Include="HMTTests.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ResultImage\" />
     <Folder Include="TestImages\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GUI.ui" />
     <Content Include="TestImages\binarySquare.png" />
     <Content Include="TestImages\crayonSquare.png" />
     <Content Include="TestImages\graySquare.png" />

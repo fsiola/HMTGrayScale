@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "HMTGrayScalePy", "HMTGrayScalePy.pyproj", "{42975975-BC64-4E34-B06E-89D3EAA2F0EC}"
 EndProject
 Global
