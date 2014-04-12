@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>42975975-bc64-4e34-b06e-89d3eaa2f0ec</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>HMT.py</StartupFile>
+    <StartupFile>HMTGUI.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,12 +22,11 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="HMTConsole.py" />
     <Compile Include="GUI.py" />
     <Compile Include="HMT.py" />
-    <Compile Include="HMTGrayScalePy.py" />
-    <Compile Include="HMTGrayScalePyTests.py" />
-    <Compile Include="HMTImageTests.py" />
-    <Compile Include="HMTTests.py" />
+    <Compile Include="HMTGUI.py" />
+    <Compile Include="Utils.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ResultImage\" />
