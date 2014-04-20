@@ -18,10 +18,10 @@ def ksHMT(f, bfg):
 
     resultImage = zeros(f.shape)
 
-
-    for x in range(f.shape[0]):
-        for y in range(f.shape[1]):
-            resultImage[x][y] = eroFBfg[x][y] - eroMFMBfg[x][y]
+    resultImage = eroFBfg - eroMFMBfg
+    #for x in range(f.shape[0]):
+    #    for y in range(f.shape[1]):
+    #        resultImage[x][y] = eroFBfg[x][y] - eroMFMBfg[x][y]
 
     return resultImage
 
@@ -72,9 +72,10 @@ def bHMT(f, bfg, bbg):
 
     resultImage = zeros(f.shape)
 
-    for x in range(f.shape[0]):
-        for y in range(f.shape[1]):
-            resultImage[x][y] = dilFBbg[x][y] - eroFBfg[x][y]
+    resultImage = dilFBbg - eroFBfg
+    #for x in range(f.shape[0]):
+    #    for y in range(f.shape[1]):
+    #        resultImage[x][y] = dilFBbg[x][y] - eroFBfg[x][y]
 
     return resultImage    
 
@@ -117,18 +118,21 @@ def rgHMT(f, bfg, bbg):
     maxF = max(f.ravel())
 
     resultImage = zeros(f.shape)
-    resultImag.dtype = 'uint8'
+    resultImage.dtype = 'uint8'
 
     for t in range(maxF):
         tempF = zeros(f.shape)
         tempBfg = zeros(bfg.shape)
         tempBbg = zeros(bbg.shape)
 
+        tempBfg.dtype = 'bool'
+        tempBbg.dtype = 'bool'
+
         tempF[where(f == t)] = True
         tempBfg[where(bfg == t)] = True
         tempBbg[where(bbg == t)] = True
 
-        tempBinHMT = binary_hit_or_miss(tempF, tempBfg, tempBbg)
+        tempBinHMT = iasupgen(tempF, iase2hmt(tempBfg, tempBbg))
 
         #not sure here
         resultImage += tempBinHMT

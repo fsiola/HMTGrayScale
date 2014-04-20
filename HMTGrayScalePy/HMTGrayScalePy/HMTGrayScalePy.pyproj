@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>42975975-bc64-4e34-b06e-89d3eaa2f0ec</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>HMTGUI.py</StartupFile>
+    <StartupFile>ArtificialImagesTests.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,6 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ArtificialImagesTests.py" />
     <Compile Include="HMTConsole.py" />
     <Compile Include="GUI.py" />
     <Compile Include="HMT.py" />
@@ -29,10 +30,17 @@
     <Compile Include="Utils.py" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ArtificialImages\" />
     <Folder Include="ResultImage\" />
     <Folder Include="TestImages\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ArtificialImages\diagonal.png" />
+    <Content Include="ArtificialImages\linear.png" />
+    <Content Include="ArtificialImages\radial.png" />
+    <Content Include="ArtificialImages\radialDifferentSizes.png" />
+    <Content Include="ArtificialImages\radialSameSize.png" />
+    <Content Include="ArtificialImages\se.png" />
     <Content Include="GUI.ui" />
     <Content Include="TestImages\binarySquare.png" />
     <Content Include="TestImages\crayonSquare.png" />
