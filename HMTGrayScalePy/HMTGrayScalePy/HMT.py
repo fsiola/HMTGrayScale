@@ -180,6 +180,53 @@ def rgHMT(f, bfg, bbg):
         resultImage += int16(tempBinHMT)
     return resultImage
 
+######### POHMT
+
+#returns markers
+def poHMT(f, bfg, bbg, P):
+    result = zeros(f.shape, dtype='int16')
+    #assuming 2d arrays
+    for x in range(f.shape[0]): #TODO: correct border
+        for y in range(f.shape[1]):#TODO: correct border
+            result[x][y] = poHMT(f, bfg, bbg, x, y, P)
+
+    return result
+
+def poHMT(f, bfg, bbg, x, y, P):
+    if(po(f, bfg, bbg, x, y) >= P):
+        return 255
+    else:
+        return 0
+
+def po(f, bfg, bbg, x, y):
+    maxV = 0
+    for t in range(255):
+        maxV = max(maxV, min(poFG(f, bfg, x, y,t), poBG(f, bbg, x, y, t)))        
+
+def poFG(f, bfg, x, y, t):
+    return (oFG(f, bfg, x, y, t)/(bfg.size))*100
+
+def poBG(f, bbg, x, y, t):
+    return (oBG(f, bbg, x, y, t)/(bbg.size))*100
+
+def oFG(f, bfg, x, y, t):
+    #assuming 2d arrays
+    result = 0
+    for a in range(bfg.shape[0]):
+        for b in range(bfg.shape[1]):
+            if ((f[x+a][y+b] + bfg[a][b]) >= t):
+                result+=1
+    return result
+
+def oBG(f, bbg, x, y, t):
+    #assuming 2d arrays
+    result = 0
+    for a in range(bbg.shape[0]):
+        for b in range(bbg.shape[1]):
+            if ((f[x+a][y+b] + bbg[a][b]) < t):
+                result+=1
+    return result
+
 
 ##########################################################################
 def erode(img, se):
