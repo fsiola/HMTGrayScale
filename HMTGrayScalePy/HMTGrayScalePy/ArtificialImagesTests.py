@@ -10,15 +10,43 @@ def main():
              "radialDifferentSizes.png",
              "radialSameSize.png"]
 
+    ses = ["se.png"]
+
     for image in files:
-        loadedImage = openImage(path + '\\' + image)
-        loadedSE = array([[0,128,255,128,0],[0,255,255,255,0],[0,128,255,128,0]])
-        showImage(loadedImage)
-        showImage(ksHMT(loadedImage, loadedSE))
-        showImage(suHMT(loadedImage, loadedSE, ianeg(loadedSE)))
-        showImage(bHMT(loadedImage, loadedSE, ianeg(loadedSE)))
-        showImage(rHMT(loadedImage, loadedSE, ianeg(loadedSE)))
-        showImage(rgHMT(loadedImage, loadedSE, ianeg(loadedSE)))
+        for se in ses:
+            loadedImage = openImage(path + '\\' + image)
+            #loadedSE =
+            #array([[0,128,255,128,0],[0,255,255,255,0],[0,128,255,128,0]])
+            #loadedSE = iasedisk(5)
+            #loadedSE[loadedSE==1]=255
+            loadedSE = openImage(path + '\\' + se)
+
+            saveAndShowImage(loadedImage, image + '_' + se + '_originalImage')
+        
+            #ksHMT
+            ksHMTResult = ksHMT(loadedImage, loadedSE)
+            saveAndShowImage(ksHMTforShow(ksHMTResult),image + '_' + se + 'ksHMTImage')
+            print diffBetweenImages(loadedImage, ksHMTResult)
+
+            #suHMT
+            suHMTResult = suHMT(loadedImage, loadedSE, ianeg(loadedSE))
+            saveAndShowImage(suHMTResult, image + '_' + se + 'suHMTImage')
+            print diffBetweenImages(loadedImage, suHMTResult)
+
+            #bHMT
+            bHMTResult = bHMT(loadedImage, loadedSE, ianeg(loadedSE))
+            saveAndShowImage(bHMTResult, image + '_' + se + 'bHMTImage')
+            print diffBetweenImages(loadedImage, bHMTResult)
+        
+            #rHMT
+            rHMTResult = rHMT(loadedImage, loadedSE, ianeg(loadedSE))
+            saveAndShowImage(rHMTResult, image + '_' + se + 'rHMTImage')
+            print diffBetweenImages(loadedImage, bHMTResult)
+
+            #rgHMT
+            rgHMTResult = rgHMT(loadedImage, loadedSE, ianeg(loadedSE))
+            saveAndShowImage(rgHMTResult, image + '_' + se + 'rgHMTImage')
+            print diffBetweenImages(loadedImage, rgHMTResult)
         
 if __name__ == "__main__":
     main()
