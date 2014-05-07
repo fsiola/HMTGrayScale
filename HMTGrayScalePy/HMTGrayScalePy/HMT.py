@@ -184,15 +184,19 @@ def rgHMT(f, bfg, bbg):
 
 #returns markers
 def poHMT(f, bfg, bbg, P):
+    f = int16(f)
+    bfg = int16(bfg)
+    bbg = int16(bbg)   
+
     result = zeros(f.shape, dtype='int16')
     #assuming 2d arrays
     for x in range(f.shape[0]): #TODO: correct border
         for y in range(f.shape[1]):#TODO: correct border
-            result[x][y] = poHMT(f, bfg, bbg, x, y, P)
+            result[x][y] = poHMTint(f, bfg, bbg, x, y, P)
 
     return result
 
-def poHMT(f, bfg, bbg, x, y, P):
+def poHMTint(f, bfg, bbg, x, y, P):
     if(po(f, bfg, bbg, x, y) >= P):
         return 255
     else:
