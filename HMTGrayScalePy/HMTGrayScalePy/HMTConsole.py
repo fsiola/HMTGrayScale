@@ -16,7 +16,6 @@ bHMTResult = None
 rHMTResult = None
 rgHMTResult = None
 
-
 #console helpers
 def help():
     print "HMT grey-erosion - type desired action"

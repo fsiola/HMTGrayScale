@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>42975975-bc64-4e34-b06e-89d3eaa2f0ec</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>QRCodeTests.py</StartupFile>
+    <StartupFile>HMTTests.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -27,20 +27,13 @@
     <Compile Include="GUI.py" />
     <Compile Include="HMT.py" />
     <Compile Include="HMTGUI.py" />
+    <Compile Include="HMTTests.py" />
     <Compile Include="poHMTTests.py" />
     <Compile Include="QRCodeTests.py" />
     <Compile Include="Utils.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ArtificialImages\" />
-    <Folder Include="QRCode\" />
-    <Folder Include="QRCode\General\" />
-    <Folder Include="QRCode\ResultImages\" />
-    <Folder Include="QRCode\OnlyObject\" />
-    <Folder Include="QRCode\SEs\" />
-    <Folder Include="QRCode\SEs\FG\" />
-    <Folder Include="QRCode\SEs\BG\" />
-    <Folder Include="QRCode\SEs\General\" />
     <Folder Include="ResultImage\" />
     <Folder Include="TestImages\" />
   </ItemGroup>
@@ -52,61 +45,6 @@
     <Content Include="ArtificialImages\radialSameSize.png" />
     <Content Include="ArtificialImages\se.png" />
     <Content Include="GUI.ui" />
-    <Content Include="QRCode\General\2413404095.jpg" />
-    <Content Include="QRCode\General\2423569169.jpg" />
-    <Content Include="QRCode\General\2423569207.jpg" />
-    <Content Include="QRCode\General\2423605457.jpg" />
-    <Content Include="QRCode\General\2423615959.jpg" />
-    <Content Include="QRCode\General\2423843117.jpg" />
-    <Content Include="QRCode\General\2425729926.jpg" />
-    <Content Include="QRCode\General\2452294959.jpg" />
-    <Content Include="QRCode\General\2452296125.jpg" />
-    <Content Include="QRCode\General\2455051979.jpg" />
-    <Content Include="QRCode\General\2455052649.jpg" />
-    <Content Include="QRCode\General\2457868748.jpg" />
-    <Content Include="QRCode\General\2465664627.jpg" />
-    <Content Include="QRCode\General\2466653163.jpg" />
-    <Content Include="QRCode\General\2468137356.jpg" />
-    <Content Include="QRCode\General\2478130371.jpg" />
-    <Content Include="QRCode\General\2502688432.jpg" />
-    <Content Include="QRCode\General\2502803272.jpg" />
-    <Content Include="QRCode\General\2512144531.jpg" />
-    <Content Include="QRCode\General\2513563863.jpg" />
-    <Content Include="QRCode\OnlyObject\1125952233.jpg" />
-    <Content Include="QRCode\OnlyObject\1476633170.jpg" />
-    <Content Include="QRCode\OnlyObject\1550199193.jpg" />
-    <Content Include="QRCode\OnlyObject\179583169.jpg" />
-    <Content Include="QRCode\OnlyObject\193927093.jpg" />
-    <Content Include="QRCode\OnlyObject\2045952006.jpg" />
-    <Content Include="QRCode\OnlyObject\2127267576.jpg" />
-    <Content Include="QRCode\OnlyObject\2154472377.jpg" />
-    <Content Include="QRCode\OnlyObject\2194489491.jpg" />
-    <Content Include="QRCode\OnlyObject\2198403406.jpg" />
-    <Content Include="QRCode\OnlyObject\2202826795.jpg" />
-    <Content Include="QRCode\OnlyObject\2207251864.jpg" />
-    <Content Include="QRCode\OnlyObject\2208592873.jpg" />
-    <Content Include="QRCode\OnlyObject\2236526151.jpg" />
-    <Content Include="QRCode\OnlyObject\2237230336.jpg" />
-    <Content Include="QRCode\OnlyObject\2644723709.jpg" />
-    <Content Include="QRCode\OnlyObject\2644756437.jpg" />
-    <Content Include="QRCode\OnlyObject\286700632.jpg" />
-    <Content Include="QRCode\OnlyObject\330745745.jpg" />
-    <Content Include="QRCode\OnlyObject\336906244.jpg" />
-    <Content Include="QRCode\OnlyObject\425608272.jpg" />
-    <Content Include="QRCode\OnlyObject\428147090.jpg" />
-    <Content Include="QRCode\OnlyObject\436037216.jpg" />
-    <Content Include="QRCode\OnlyObject\459198539.jpg" />
-    <Content Include="QRCode\OnlyObject\459198815.jpg" />
-    <Content Include="QRCode\OnlyObject\460681372.jpg" />
-    <Content Include="QRCode\OnlyObject\475956541.jpg" />
-    <Content Include="QRCode\OnlyObject\494045485.jpg" />
-    <Content Include="QRCode\OnlyObject\500310378.jpg" />
-    <Content Include="QRCode\OnlyObject\71851287.jpg" />
-    <Content Include="QRCode\OnlyObject\870424758.jpg" />
-    <Content Include="QRCode\OnlyObject\939831659.jpg" />
-    <Content Include="QRCode\SEs\General\FIP_1.png" />
-    <Content Include="QRCode\SEs\General\Pattern_1.png" />
-    <Content Include="QRCode\SEs\General\Pattern_2.png" />
     <Content Include="TestImages\binarySquare.png" />
     <Content Include="TestImages\crayonSquare.png" />
     <Content Include="TestImages\graySquare.png" />

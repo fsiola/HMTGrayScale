@@ -21,7 +21,7 @@ def ksHMT(f, bfg):
     eroFBfg = int16(eroFBfg)
     eroMFMBfg = int16(eroMFMBfg)
 
-    resultImage = eroFBfg - eroMFMBfg
+    resultImage = eroFBfg + eroMFMBfg
     
     return resultImage
 
@@ -55,7 +55,7 @@ def suHMT(f,bfg, bbg):
     if len(bbg.shape) == 1:
         bbg = expand_dims(bbg,0)
 
-    bbg = ianeg(bbg)
+    bbg = iasereflect(ianeg(bbg))
 
     eroFBfg = iaero(f, bfg)
     dilFBbg = iadil(f, bbg)
@@ -72,7 +72,7 @@ def suHMT(f,bfg, bbg):
 
 #Barat Hit-or-Miss Transformation
 #input: image and gray level ses
-#output: image result  with values from -255 to 255, where higher values are better matches
+#output: image result  with values from -255 to 255, where lower values are better matches
 def bHMT(f, bfg, bbg):
     if len(f.shape) == 1:
         f = expand_dims(f,0)
@@ -83,7 +83,7 @@ def bHMT(f, bfg, bbg):
     if len(bbg.shape) == 1:
         bbg = expand_dims(bbg,0)
 
-    bbg = ianeg(bbg)
+    bbg = iasereflect(ianeg(bbg))
 
     eroFBfg = iaero(f, bfg)
     dilFBbg = iadil(f, bbg)
