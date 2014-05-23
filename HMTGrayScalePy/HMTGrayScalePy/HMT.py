@@ -111,7 +111,7 @@ def bHMTforShow(bHMTresult):
 
 #Ronse Hit-Or-Miss Transformation
 #input: image and gray level ses
-#output: image result  with values from 0 to 255, where higher values are better matches
+#output: image result  with values from -255 to 255, where higher values are better matches
 def rHMT(f, bfg, bbg):
     if len(f.shape) == 1:
         f = expand_dims(f,0)
@@ -122,7 +122,7 @@ def rHMT(f, bfg, bbg):
     if len(bbg.shape) == 1:
         bbg = expand_dims(bbg,0)
 
-    bbg = ianeg(bbg)
+    bbg = iasereflect(ianeg(bbg))
 
     eroFBfg = iaero(f, bfg)
     dilFBbg = iadil(f, bbg)
@@ -138,14 +138,7 @@ def rHMT(f, bfg, bbg):
 
     resultImage = eroFBfg
     resultImage[resultImage >= dilFBbg] = maxValue
-
-    #for x in range(f.shape[0]):
-    #    for y in range(f.shape[1]):
-    #        if(eroFBfg[x][y] >= dilFBbg[x][y] != maxValue):
-    #            resultImage[x][y] = eroFBfg[x][y]
-    #        else:
-    #            resultImage[x][y] = maxValue
-
+    
     return resultImage    
 
 #Raducana and Grana Hit-Or-Miss Transformation
@@ -161,6 +154,8 @@ def rgHMT(f, bfg, bbg):
 
     resultImage = zeros(f.shape, dtype = 'int16')
 
+    bbg = iasereflect(ianeg(bbg))
+
     for t in range(maxF):
         tempF = zeros(f.shape)
         tempBfg = zeros(bfg.shape)
@@ -170,9 +165,9 @@ def rgHMT(f, bfg, bbg):
         tempBfg = bool_(tempBfg)
         tempBbg = bool_(tempBbg)
 
-        tempF[where(f == t)] = True
-        tempBfg[where(bfg == t)] = True
-        tempBbg[where(bbg == t)] = True
+        tempF[where(f <= t)] = True
+        tempBfg[where(bfg <= t)] = True
+        tempBbg[where(bbg <= t)] = True
 
         tempBinHMT = iasupgen(tempF, iase2hmt(tempBfg, tempBbg))
 

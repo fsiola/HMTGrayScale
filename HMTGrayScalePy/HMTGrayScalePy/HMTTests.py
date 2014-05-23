@@ -29,6 +29,19 @@ def main():
     result = bHMT(f, bfg, bbg)
     print(result)
 
+    #RHMT
+    f = array([0,0,255,255,255,0,0,100,255,100,0,0,255,255,255,0,0])
+    bfg = array([25,25,25])
+    bbg = array([255,255,255])
+    result = rHMT(f, bfg, bbg)
+    print(result)
+
+    #RGHMT
+    f = array([0,0,255,255,255,0,0,100,255,100,0,0,255,255,255,0,0])
+    bfg = array([25,25,25])
+    bbg = array([255,255,255])
+    result = rgHMT(f, bfg, bbg)
+    print(result)
 
 if __name__ == "__main__":
     main() 
