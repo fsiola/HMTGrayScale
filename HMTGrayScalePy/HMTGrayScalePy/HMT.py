@@ -15,13 +15,12 @@ def ksHMT(f, bfg):
     if len(bfg.shape) == 1:
         bfg = expand_dims(bfg,0)
         
-    eroFBfg = iaero(f, bfg)
-    eroMFMBfg = iaero(ianeg(f), ianeg(bfg))
-
-    eroFBfg = int16(eroFBfg)
-    eroMFMBfg = int16(eroMFMBfg)
-
-    resultImage = eroFBfg + eroMFMBfg
+    eroFBfg = iaero(int32(f), bfg)
+    eroMFMBfg = iaero(ianeg(int32(f)), ianeg(int32(bfg)))
+    
+    resultImage = eroFBfg + eroMFMBfg + 1
+    resultImage[resultImage > 20000] = -255 #fixing overflow
+    resultImage[resultImage < -255] = 0 #fixing overflow
     
     return resultImage
 
@@ -57,8 +56,8 @@ def suHMT(f,bfg, bbg):
 
     bbg = iasereflect(ianeg(bbg))
 
-    eroFBfg = iaero(f, bfg)
-    dilFBbg = iadil(f, bbg)
+    eroFBfg = iaero(int32(f), bfg)
+    dilFBbg = iadil(int32(f), bbg)
 
     eroFBfg = int16(eroFBfg)
     dilFBbg = int16(dilFBbg)
@@ -83,10 +82,16 @@ def bHMT(f, bfg, bbg):
     if len(bbg.shape) == 1:
         bbg = expand_dims(bbg,0)
 
-    bbg = iasereflect(ianeg(bbg))
+    #bbg = iasereflect(ianeg(bbg))
 
-    eroFBfg = iaero(f, bfg)
-    dilFBbg = iadil(f, bbg)
+    eroFBfg = iaero(int32(f), bfg)
+    dilFBbg = iadil(int32(f), bbg)
+
+    eroFBfg[eroFBfg == sys.maxint] = -255 #fixing overflow
+    eroFBfg[eroFBfg < -255] = 0 #fixing overflow    
+
+    dilFBbg[dilFBbg == sys.maxint] = -255 #fixing overflow
+    dilFBbg[dilFBbg < -255] = 0 #fixing overflow    
 
     eroFBfg = int16(eroFBfg)
     dilFBbg = int16(dilFBbg)
@@ -95,6 +100,13 @@ def bHMT(f, bfg, bbg):
 
     resultImage = dilFBbg - eroFBfg
     
+    resultImage[resultImage < -255] = 0 #fixing overflow    
+
+    if(max(resultImage.ravel()) > 255):
+        resultImage = resultImage - (max(resultImage.ravel())-255)
+
+    resultImage[resultImage > 255] = 255 #fixing overflow    
+
     return resultImage    
 
 #BHMT for showing in screen
@@ -122,39 +134,40 @@ def rHMT(f, bfg, bbg):
     if len(bbg.shape) == 1:
         bbg = expand_dims(bbg,0)
 
-    bbg = iasereflect(ianeg(bbg))
+    #bbg = iasereflect(ianeg(bbg))
 
-    eroFBfg = iaero(f, bfg)
-    dilFBbg = iadil(f, bbg)
+    eroFBfg = iaero(int32(f), int32(bfg))
+    dilFBbg = iadil(int32(f), int32(bbg))
 
-    eroFBfg = int16(eroFBfg)
-    dilFBbg = int16(dilFBbg)
+#    eroFBfg = int16(eroFBfg)
+#    dilFBbg = int16(dilFBbg)
 
-    resultImage = zeros(f.shape, dtype='int16')
+    resultImage = zeros(f.shape, dtype='int32')
 
-    maxValue = max(max(eroFBfg.ravel()), max(dilFBbg.ravel())) + 1
+    maxValue = max(max(max(eroFBfg.ravel()), max(dilFBbg.ravel())) + 1, 255)
 
     resultImage = zeros(f.shape)
 
     resultImage = eroFBfg
     resultImage[resultImage >= dilFBbg] = maxValue
+    resultImage[resultImage < 0] = 0 #fixing overflow
     
     return resultImage    
 
 #Raducana and Grana Hit-Or-Miss Transformation
 #input: image and gray level ses
-#output: image result  with values from -255 to 255, where higher values are better matches
+#output: image result  with values from 0 to 255, where higher values are better matches
 def rgHMT(f, bfg, bbg):
     #[RGHMT_b(f)](x) = sup_{t \in t_max} (x \in HMT_b_t(CSt(f))
 
     if len(f.shape) == 1:
         f = expand_dims(f,0)
 
-    maxF = max(f.ravel())
+    maxF = int(max(f.ravel()))
 
-    resultImage = zeros(f.shape, dtype = 'int16')
+    resultImage = zeros(f.shape, dtype = 'int32')
 
-    bbg = iasereflect(ianeg(bbg))
+    #bbg = ianeg(bbg)
 
     for t in range(maxF):
         tempF = zeros(f.shape)
@@ -168,11 +181,17 @@ def rgHMT(f, bfg, bbg):
         tempF[where(f <= t)] = True
         tempBfg[where(bfg <= t)] = True
         tempBbg[where(bbg <= t)] = True
+        tempBbg[where(iaintersec(tempBfg,tempBbg) == True)] = False #removing intersecs (?)
 
-        tempBinHMT = iasupgen(tempF, iase2hmt(tempBfg, tempBbg))
+        try:
+            tempBinHMT = iasupgen(tempF, iase2hmt(tempBfg, tempBbg))
+        except:
+            tempBinHMT = bool_(zeros(tempF.shape))
 
         #not sure here
-        resultImage += int16(tempBinHMT)
+        resultImage += int32(tempBinHMT)
+
+    resultImage = ianeg(int32(resultImage-255+f)) #diference between result and f
     return resultImage
 
 ######### POHMT
@@ -213,8 +232,9 @@ def oFG(f, bfg, x, y, t):
     result = 0
     for a in range(bfg.shape[0]):
         for b in range(bfg.shape[1]):
-            if ((f[x+a][y+b] + bfg[a][b]) >= t):
-                result+=1
+            if ((x+a < f.shape[0] and y+b < f.shape[1])):
+               if((f[x+a][y+b] + bfg[a][b]) >= t):
+                    result+=1
     return result
 
 def oBG(f, bbg, x, y, t):
@@ -222,8 +242,9 @@ def oBG(f, bbg, x, y, t):
     result = 0
     for a in range(bbg.shape[0]):
         for b in range(bbg.shape[1]):
-            if ((f[x+a][y+b] + bbg[a][b]) < t):
-                result+=1
+            if ((x+a < f.shape[0] and y+b < f.shape[1])):
+                if((f[x+a][y+b] + bbg[a][b]) < t):
+                    result+=1
     return result
 
 

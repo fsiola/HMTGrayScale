@@ -5,13 +5,17 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>42975975-bc64-4e34-b06e-89d3eaa2f0ec</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>HMTTests.py</StartupFile>
-    <SearchPath>
-    </SearchPath>
+    <StartupFile>NewQrCodeTests.py</StartupFile>
+    <SearchPath>C:\SimpleCV1.3\files\opencv\build\python\2.7\</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>HMTGrayScalePy</Name>
     <RootNamespace>HMTGrayScalePy</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments />
+    <InterpreterPath />
+    <InterpreterArguments />
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,13 +26,16 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ArtificalImages.py" />
     <Compile Include="ArtificialImagesTests.py" />
     <Compile Include="HMTConsole.py" />
     <Compile Include="GUI.py" />
     <Compile Include="HMT.py" />
     <Compile Include="HMTGUI.py" />
     <Compile Include="HMTTests.py" />
+    <Compile Include="NewQrCodeTests.py" />
     <Compile Include="poHMTTests.py" />
+    <Compile Include="VasosSanguineosTests.py" />
     <Compile Include="QRCodeTests.py" />
     <Compile Include="Utils.py" />
   </ItemGroup>
